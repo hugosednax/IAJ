@@ -50,20 +50,20 @@ namespace Assets.Scripts.IAJ.Unity.Movement.Arbitration
             {
                 movementWithWeight.Movement.Character = this.Character;
                 tempOutput =  movementWithWeight.Movement.GetMovement();
-                try
-                {
+                /*try
+                {*/
                     if (tempOutput.SquareMagnitude() > 0)
                     {
                         finalOutput.linear += tempOutput.linear * movementWithWeight.Weight;
                         finalOutput.angular += tempOutput.angular * movementWithWeight.Weight;
                         totalWeight += movementWithWeight.Weight;
                     }
-                }
+                /*}
                 catch (NullReferenceException e)
                 {
                     //THIS IS PROLLY CHEATING
                     continue;
-                }
+                }*/
             }
 
             if (totalWeight > 0)

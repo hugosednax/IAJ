@@ -36,7 +36,7 @@ namespace Assets.Scripts.IAJ.Unity.Movement.DynamicMovement
 			float distance = direction.magnitude;
 
 			if (distance < StopRadius)
-				return null;
+				return new MovementOutput();
 
 			float targetSpeed;
 			if (distance > SlowRadius)
