@@ -10,30 +10,35 @@ namespace Assets.Scripts.IAJ.Unity.Movement.DynamicMovement
     class DynamicFlockVelocityMatching : DynamicVelocityMatch
     {
         List<KinematicData> flock;
-        float separationFactor, radius, separationStrength, fanAngle;
+        float  radius, fanAngle;
 
-        List<KinematicData> Flock
+        public List<KinematicData> Flock
         {
             get { return flock; }
             set { flock = value; }
         }
-
-        float SeparationFactor
-        {
-            get { return separationFactor; }
-            set { separationFactor = value; }
-        }
-
-        float Radius
+        public float Radius
         {
             get { return radius; }
             set { radius = value; }
         }
 
-        float FanAngle
+        public float FanAngle
         {
             get { return fanAngle; }
             set { fanAngle = value; }
+        }
+
+        public override KinematicData Target
+        {
+            get
+            {
+                return base.Target;
+            }
+            set
+            {
+                base.Target = value;
+            }
         }
 
         public override MovementOutput GetMovement()
@@ -64,16 +69,5 @@ namespace Assets.Scripts.IAJ.Unity.Movement.DynamicMovement
             get { return "Dynamic Flock Velocity Matching"; }
         }
 
-        public override KinematicData Target
-        {
-            get
-            {
-                return Target;
-            }
-            set
-            {
-                Target = value;
-            }
-        }
     }
 }

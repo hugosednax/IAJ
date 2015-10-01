@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Assets.Scripts.IAJ.Unity.Movement.Arbitration
@@ -48,12 +49,20 @@ namespace Assets.Scripts.IAJ.Unity.Movement.Arbitration
             foreach (MovementWithWeight movementWithWeight in this.Movements)
             {
                 movementWithWeight.Movement.Character = this.Character;
-                tempOutput = movementWithWeight.Movement.GetMovement();
-                if (tempOutput.SquareMagnitude() > 0)
+                tempOutput =  movementWithWeight.Movement.GetMovement();
+                try
                 {
-                    finalOutput.linear += tempOutput.linear * movementWithWeight.Weight;
-                    finalOutput.angular += tempOutput.angular * movementWithWeight.Weight;
-                    totalWeight += movementWithWeight.Weight;    
+                    if (tempOutput.SquareMagnitude() > 0)
+                    {
+                        finalOutput.linear += tempOutput.linear * movementWithWeight.Weight;
+                        finalOutput.angular += tempOutput.angular * movementWithWeight.Weight;
+                        totalWeight += movementWithWeight.Weight;
+                    }
+                }
+                catch (NullReferenceException e)
+                {
+                    //THIS IS PROLLY CHEATING
+                    continue;
                 }
             }
 

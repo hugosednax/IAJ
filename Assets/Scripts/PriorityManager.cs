@@ -17,9 +17,9 @@ public class PriorityManager : MonoBehaviour
     public const float MAX_ACCELERATION = 40.0f;
     public const float DRAG = 0.1f;
     public const float COHESION_WEIGHT = 8.0f;
-    public const float COHESION_RADIUS = 15f;
-    public const float SEPARATION_FACTOR = 1.0f;
-    public const float FAN_ANGLE = 1.5f;
+    public const float COHESION_RADIUS = 8f;
+    public const float SEPARATION_FACTOR = 3.0f;
+    public const float FAN_ANGLE = 1f;
 
 	private DynamicCharacter RedCharacter { get; set; }
 	private DynamicCharacter BlueCharacter { get; set; }
@@ -195,9 +195,9 @@ public class PriorityManager : MonoBehaviour
                     MaxAcceleration = MAX_ACCELERATION,
                     MovementDebugColor = Color.yellow,
                     MovingTarget = new KinematicData(),
-                    SlowRadius = 2f,
-                    StopRadius = 0.5f,
-                    TimeToTargetSpeed = 0.5f,
+                    SlowRadius = 5f,
+                    StopRadius = 3.5f,
+                    TimeToTargetSpeed = 1.0f,
                     Target = new KinematicData(),
                     FanAngle = FAN_ANGLE,
                     Radius = COHESION_RADIUS,
@@ -215,6 +215,19 @@ public class PriorityManager : MonoBehaviour
                     Radius = COHESION_RADIUS,
                     SeparationFactor = SEPARATION_FACTOR
                 };
+
+                var flockVelocityMatch = new DynamicFlockVelocityMatching()
+                {
+                    Character = character.KinematicData,
+                    FanAngle = FAN_ANGLE,
+                    Flock = otherCharacters,
+                    MaxAcceleration = MAX_ACCELERATION,
+                    MovementDebugColor = Color.black,
+                    MovingTarget = new KinematicData(),
+                    Radius = COHESION_RADIUS,
+                    Target = new KinematicData(),
+                    TimeToTargetSpeed = 1.5f
+                };
                 //priority.Movements.Add(avoidCharacter);
            /* }
         }*/
@@ -229,6 +242,7 @@ public class PriorityManager : MonoBehaviour
         //priority.Movements.Add(straightAhead);
         blended.Movements.Add(new MovementWithWeight(straightAhead, 1.0f));
         blended.Movements.Add(new MovementWithWeight(separationCharacter, 5.0f));
+        blended.Movements.Add(new MovementWithWeight(flockVelocityMatch, 6.0f));
         character.Movement = blended;
     }
 
