@@ -2,6 +2,7 @@
 using System.Linq;
 using Assets.Scripts.IAJ.Unity.Movement.Arbitration;
 using Assets.Scripts.IAJ.Unity.Movement.DynamicMovement;
+using Assets.Scripts.IAJ.Unity.Movement;
 using UnityEngine;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
@@ -15,6 +16,10 @@ public class PriorityManager : MonoBehaviour
     public const float MAX_SPEED = 20.0f;
     public const float MAX_ACCELERATION = 40.0f;
     public const float DRAG = 0.1f;
+    public const float COHESION_WEIGHT = 8.0f;
+    public const float COHESION_RADIUS = 15f;
+    public const float SEPARATION_FACTOR = 1.0f;
+    public const float FAN_ANGLE = 1.5f;
 
 	private DynamicCharacter RedCharacter { get; set; }
 	private DynamicCharacter BlueCharacter { get; set; }
@@ -139,7 +144,20 @@ public class PriorityManager : MonoBehaviour
             Character = character.KinematicData
         };
 
-	    foreach (var obstacle in obstacles)
+        var blended = new BlendedMovement
+        {
+            Character = character.KinematicData,
+        };
+
+        List<KinematicData> otherCharacters = new List<KinematicData>();
+
+        foreach (DynamicCharacter otherChar in this.Characters)
+        {
+            if (otherChar != character)
+                otherCharacters.Add(otherChar.KinematicData);
+        }
+
+	    /*foreach (var obstacle in obstacles)
 	    {
 
             //TODO: add your AvoidObstacle movement here
@@ -153,14 +171,14 @@ public class PriorityManager : MonoBehaviour
             };
             
             priority.Movements.Add(avoidObstacleMovement);
-	    }
+	    }*/
 
-        foreach (var otherCharacter in this.Characters)
+        /*foreach (var otherCharacter in this.Characters)
         {
             if (otherCharacter != character)
-            {
+            {*/
                 //TODO: add your avoidCharacter movement here
-                var avoidCharacter = new DynamicAvoidCharacter()
+                /*var avoidCharacter = new DynamicAvoidCharacter()
                 {
                     Character = character.KinematicData,
                     MaxAcceleration = MAX_ACCELERATION,
@@ -169,11 +187,37 @@ public class PriorityManager : MonoBehaviour
                     MaxTimeLookAhead = 1f,
                     Target = otherCharacter.KinematicData,
                     MovementDebugColor = Color.cyan 
-                };
+                };*/
 
-                priority.Movements.Add(avoidCharacter);
-            }
-        }
+                var cohesionCharacter = new DynamicCohesion()
+                {
+                    Character = character.KinematicData,
+                    MaxAcceleration = MAX_ACCELERATION,
+                    MovementDebugColor = Color.yellow,
+                    MovingTarget = new KinematicData(),
+                    SlowRadius = 2f,
+                    StopRadius = 0.5f,
+                    TimeToTargetSpeed = 0.5f,
+                    Target = new KinematicData(),
+                    FanAngle = FAN_ANGLE,
+                    Radius = COHESION_RADIUS,
+                    Flock = otherCharacters
+                };
+                blended.Movements.Add(new MovementWithWeight(cohesionCharacter, COHESION_WEIGHT));
+
+                var separationCharacter = new DynamicSeparation()
+                {
+                    Character = character.KinematicData,
+                    MaxAcceleration = MAX_ACCELERATION,
+                    MovementDebugColor = Color.blue,
+                    Target = new KinematicData(),
+                    Flock = otherCharacters,
+                    Radius = COHESION_RADIUS,
+                    SeparationFactor = SEPARATION_FACTOR
+                };
+                //priority.Movements.Add(avoidCharacter);
+           /* }
+        }*/
 
         var straightAhead = new DynamicStraightAhead
         {
@@ -182,9 +226,10 @@ public class PriorityManager : MonoBehaviour
             MovementDebugColor = Color.yellow
         };
 
-        priority.Movements.Add(straightAhead);
-
-        character.Movement = priority;
+        //priority.Movements.Add(straightAhead);
+        blended.Movements.Add(new MovementWithWeight(straightAhead, 1.0f));
+        blended.Movements.Add(new MovementWithWeight(separationCharacter, 5.0f));
+        character.Movement = blended;
     }
 
     private List<DynamicCharacter> CloneSecondaryCharacters(GameObject objectToClone,int numberOfCharacters, GameObject[] obstacles)

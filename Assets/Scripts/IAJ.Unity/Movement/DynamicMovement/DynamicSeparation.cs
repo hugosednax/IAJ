@@ -11,19 +11,19 @@ namespace Assets.Scripts.IAJ.Unity.Movement.DynamicMovement
         List<KinematicData> flock;
         float separationFactor, radius, separationStrength;
 
-        List<KinematicData> Flock
+        public List<KinematicData> Flock
         {
             get { return flock; }
             set { flock = value; }
         }
 
-        float SeparationFactor
+        public float SeparationFactor
         {
             get { return separationFactor; }
             set { separationFactor = value; }
         }
 
-        float Radius
+        public float Radius
         {
             get { return radius; }
             set { radius = value; }
@@ -56,16 +56,6 @@ namespace Assets.Scripts.IAJ.Unity.Movement.DynamicMovement
             get { return "Dynamic Separation"; }
         }
 
-        public override KinematicData Target
-        {
-            get
-            {
-                return Target;
-            }
-            set
-            {
-                Target = value;
-            }
-        }
+        public override KinematicData Target { get; set; }
     }
 }

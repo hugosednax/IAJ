@@ -6,7 +6,7 @@
 	<ProductVersion>10.0.20506</ProductVersion>
 	<SchemaVersion>2.0</SchemaVersion>
 	<RootNamespace></RootNamespace>
-	<ProjectGuid>{A8774867-1559-EE68-988E-DD3D52DFEE95}</ProjectGuid>
+	<ProjectGuid>{AAF2225A-11A8-05C3-F2A6-1A9A0ED91721}</ProjectGuid>
 	<OutputType>Library</OutputType>
 	<AppDesignerFolder>Properties</AppDesignerFolder>
 	<AssemblyName>Assembly-CSharp</AssemblyName>
@@ -45,7 +45,6 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\CalcVelocity.cs" />
      <Compile Include="Assets\Scripts\IAJ.Unity\Movement\Arbitration\BlendedMovement.cs" />
      <Compile Include="Assets\Scripts\IAJ.Unity\Movement\Arbitration\PriorityMovement.cs" />
      <Compile Include="Assets\Scripts\IAJ.Unity\Movement\DynamicMovement\DynamicArrive.cs" />

@@ -10,27 +10,21 @@ namespace Assets.Scripts.IAJ.Unity.Movement.DynamicMovement
     class DynamicCohesion : DynamicArrive
     {
         List<KinematicData> flock;
-        float separationFactor, radius, separationStrength, fanAngle;
+        float radius, fanAngle;
 
-        List<KinematicData> Flock
+        public List<KinematicData> Flock
         {
             get { return flock; }
             set { flock = value; }
         }
 
-        float SeparationFactor
-        {
-            get { return separationFactor; }
-            set { separationFactor = value; }
-        }
-
-        float Radius
+        public float Radius
         {
             get { return radius; }
             set { radius = value; }
         }
 
-        float FanAngle
+        public float FanAngle
         {
             get { return fanAngle; }
             set { fanAngle = value; }
@@ -64,16 +58,5 @@ namespace Assets.Scripts.IAJ.Unity.Movement.DynamicMovement
             get { return "Dynamic Cohesion"; }
         }
 
-        public override KinematicData Target
-        {
-            get
-            {
-                return Target;
-            }
-            set
-            {
-                Target = value;
-            }
-        }
     }
 }
