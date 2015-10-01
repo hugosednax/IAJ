@@ -16,10 +16,12 @@ public class PriorityManager : MonoBehaviour
     public const float MAX_SPEED = 20.0f;
     public const float MAX_ACCELERATION = 40.0f;
     public const float DRAG = 0.1f;
-    public const float COHESION_WEIGHT = 8.0f;
-    public const float COHESION_RADIUS = 8f;
-    public const float SEPARATION_FACTOR = 3.0f;
-    public const float FAN_ANGLE = 1f;
+    public const float COHESION_WEIGHT = 60.0f;
+    public const float SEPARATION_WEIGHT = 30.0f;
+    public const float MATCH_SPEED_WEIGHT = 30.0f;
+    public const float COHESION_RADIUS = 60f;
+    public const float SEPARATION_FACTOR = 60.0f;
+    public const float FAN_ANGLE = 30f;
 
 	private DynamicCharacter RedCharacter { get; set; }
 	private DynamicCharacter BlueCharacter { get; set; }
@@ -215,6 +217,7 @@ public class PriorityManager : MonoBehaviour
                     Radius = COHESION_RADIUS,
                     SeparationFactor = SEPARATION_FACTOR
                 };
+                blended.Movements.Add(new MovementWithWeight(separationCharacter, SEPARATION_WEIGHT));
 
                 var flockVelocityMatch = new DynamicFlockVelocityMatching()
                 {
@@ -228,6 +231,9 @@ public class PriorityManager : MonoBehaviour
                     Target = new KinematicData(),
                     TimeToTargetSpeed = 1.5f
                 };
+                blended.Movements.Add(new MovementWithWeight(flockVelocityMatch, MATCH_SPEED_WEIGHT));
+
+
                 //priority.Movements.Add(avoidCharacter);
            /* }
         }*/
