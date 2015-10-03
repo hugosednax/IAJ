@@ -56,7 +56,7 @@ namespace Assets.Scripts.IAJ.Unity.Movement.DynamicMovement
                 else
                     realHit = hitL;
 
-                Debug.Log(realHit.transform.name);
+                //Debug.Log(realHit.transform.name);
                 Target.position = realHit.point + realHit.normal.normalized * AvoidMargin;
                 Debug.DrawRay(realHit.point, Target.position - realHit.point, Color.blue);
             }

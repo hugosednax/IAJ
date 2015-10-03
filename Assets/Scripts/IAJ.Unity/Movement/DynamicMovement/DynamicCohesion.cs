@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 using Assets.Scripts.IAJ.Unity.Util;
+using Assets.Scripts.IAJ.Unity.Movement;
 
 namespace Assets.Scripts.IAJ.Unity.Movement.DynamicMovement
 {
@@ -11,7 +12,7 @@ namespace Assets.Scripts.IAJ.Unity.Movement.DynamicMovement
     {
         List<KinematicData> flock;
         float radius, fanAngle;
-        Vector3 click;
+        //Vector3 click;
         const float CLICK_DISTANCE = 5f;
 
         public List<KinematicData> Flock
@@ -32,15 +33,15 @@ namespace Assets.Scripts.IAJ.Unity.Movement.DynamicMovement
             set { fanAngle = value; }
         }
 
-        public Vector3 Click
+        /*public Vector3 Click
         {
             get { return click; }
             set { click = value; }
-        }
+        }*/
 
         public override MovementOutput GetMovement()
         {
-            if (Input.GetMouseButtonDown(0))
+            /*if (Input.GetMouseButtonDown(0))
             {
                 RaycastHit hit;
                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -48,7 +49,7 @@ namespace Assets.Scripts.IAJ.Unity.Movement.DynamicMovement
                 float distance = Camera.main.transform.position.y / Mathf.Cos(angle);
                 Click = ray.origin + (ray.direction * distance);
                 click.y = 0;
-            }
+            }*/
 
             Vector3 massCenter = new Vector3();
             int closeBoids = 0;
@@ -66,9 +67,11 @@ namespace Assets.Scripts.IAJ.Unity.Movement.DynamicMovement
                 }
             }
             if(closeBoids == 0) return new MovementOutput();
-            if (Click.x != -1 && Click.y != -1 && Click.z != -1 && (Character.position - click).magnitude <= CLICK_DISTANCE)
+            //Debug.Log("Received click: " + PriorityManager.click);
+            if (PriorityManager.click.x != -1 && (Character.position - PriorityManager.click).magnitude >= CLICK_DISTANCE)
             {
-                massCenter += Click;
+                //Debug.Log("Has clicked");
+                massCenter += PriorityManager.click;
                 massCenter /= (closeBoids + 1);
             }else
                 massCenter /= closeBoids;

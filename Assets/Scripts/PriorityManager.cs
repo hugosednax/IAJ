@@ -23,7 +23,7 @@ public class PriorityManager : MonoBehaviour
     public const float SEPARATION_FACTOR = 60.0f;
     public const float FAN_ANGLE = 30f;
 
-    public Vector3 click = new Vector3(-1, -1, -1);
+    public static Vector3 click = new Vector3(-1, -1, -1);
 
 	private DynamicCharacter RedCharacter { get; set; }
 	private DynamicCharacter BlueCharacter { get; set; }
@@ -36,7 +36,6 @@ public class PriorityManager : MonoBehaviour
     private PriorityMovement Priority { get; set; }
 
     private List<DynamicCharacter> Characters { get; set; }
-
 
 	// Use this for initialization
 	void Start () 
@@ -206,8 +205,7 @@ public class PriorityManager : MonoBehaviour
                     Target = new KinematicData(),
                     FanAngle = FAN_ANGLE,
                     Radius = COHESION_RADIUS,
-                    Flock = otherCharacters,
-                    Click = click
+                    Flock = otherCharacters
                 };
                 blended.Movements.Add(new MovementWithWeight(cohesionCharacter, COHESION_WEIGHT));
 
@@ -317,6 +315,17 @@ public class PriorityManager : MonoBehaviour
 		{
 		    this.RedCharacter.Movement = this.Priority;
 		}
+
+        if (Input.GetMouseButtonDown(0))
+        {
+            RaycastHit hit;
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            float angle = Vector3.Angle(ray.direction, Vector3.down) * Mathf.Deg2Rad;
+            float distance = Camera.main.transform.position.y / Mathf.Cos(angle);
+            click = ray.origin + (ray.direction * distance);
+            click.y = 0;
+            //Debug.Log("Click point: " + click);
+        }
 
 	    foreach (var character in this.Characters)
 	    {
