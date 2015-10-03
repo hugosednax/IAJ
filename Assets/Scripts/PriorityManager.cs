@@ -12,15 +12,19 @@ public class PriorityManager : MonoBehaviour
     public const float X_WORLD_SIZE = 55;
     public const float Z_WORLD_SIZE = 32.5f;
     public const float AVOID_MARGIN = 4.0f;
+
     public const float MAX_LOOK_AHEAD = 5.0f;
-    public const float MAX_SPEED = 20.0f;
+    public const float MAX_SPEED = 40.0f;
     public const float MAX_ACCELERATION = 40.0f;
+
     public const float DRAG = 0.1f;
-    public const float COHESION_WEIGHT = 60.0f;
+    public const float CLICK_ARRIVE_WEIGHT= 60.0f;
+    public const float COHESION_WEIGHT = 30.0f;
     public const float SEPARATION_WEIGHT = 30.0f;
     public const float MATCH_SPEED_WEIGHT = 30.0f;
     public const float COHESION_RADIUS = 60f;
-    public const float SEPARATION_FACTOR = 60.0f;
+    public const float SEPARATION_FACTOR = 80.0f;
+    public const float MAX_NUMBER_OF_CLONES = 51.0f;
     public const float FAN_ANGLE = 30f;
 
     public static Vector3 click = new Vector3(-1, -1, -1);
@@ -62,7 +66,8 @@ public class PriorityManager : MonoBehaviour
 
 	    var obstacles = GameObject.FindGameObjectsWithTag("Obstacle");
 
-	    this.Characters = this.CloneSecondaryCharacters(redObj, 10, obstacles);
+        int numberOfClones = (int)(Random.value * MAX_NUMBER_OF_CLONES);
+        this.Characters = this.CloneSecondaryCharacters(redObj, numberOfClones, obstacles);
 
 	    this.Characters.Add(this.RedCharacter);
 
@@ -160,6 +165,19 @@ public class PriorityManager : MonoBehaviour
                 otherCharacters.Add(otherChar.KinematicData);
         }
         otherCharacters.Remove(RedCharacter.KinematicData); // REMOVE THIS LINE AFTER
+
+
+        var clickArrive = new DynamicClickArrive()
+        {
+            Character = character.KinematicData,
+            MaxAcceleration = MAX_ACCELERATION,
+            MovingTarget = new KinematicData(),
+            SlowRadius = 5f,
+            StopRadius = 3.5f,
+            TimeToTargetSpeed = 1.0f,
+            Target = new KinematicData(),
+        };
+        blended.Movements.Add(new MovementWithWeight(clickArrive, CLICK_ARRIVE_WEIGHT));
 
 	    foreach (var obstacle in obstacles)
 	    {
@@ -262,9 +280,11 @@ public class PriorityManager : MonoBehaviour
             var clone = GameObject.Instantiate(objectToClone);
             //clone.transform.position = new Vector3(30,0,i*20);
             clone.transform.position = this.GenerateRandomClearPosition(obstacles);
+            float randomizedMaxSpeed = Mathf.Max((Random.value * MAX_SPEED), 1);    //to avoid speed 0 dunno if its good
+            //Debug.Log(randomizedMaxSpeed);
             var character = new DynamicCharacter(clone)
             {
-                MaxSpeed = MAX_SPEED,
+                MaxSpeed = randomizedMaxSpeed,
                 Drag = DRAG
             };
             //character.KinematicData.orientation = (float)Math.PI*i;

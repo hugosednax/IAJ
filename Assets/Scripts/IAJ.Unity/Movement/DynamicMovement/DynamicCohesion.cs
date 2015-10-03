@@ -12,8 +12,7 @@ namespace Assets.Scripts.IAJ.Unity.Movement.DynamicMovement
     {
         List<KinematicData> flock;
         float radius, fanAngle;
-        //Vector3 click;
-        const float CLICK_DISTANCE = 5f;
+        //const float CLICK_DISTANCE = 5f;
 
         public List<KinematicData> Flock
         {
@@ -33,23 +32,8 @@ namespace Assets.Scripts.IAJ.Unity.Movement.DynamicMovement
             set { fanAngle = value; }
         }
 
-        /*public Vector3 Click
-        {
-            get { return click; }
-            set { click = value; }
-        }*/
-
         public override MovementOutput GetMovement()
         {
-            /*if (Input.GetMouseButtonDown(0))
-            {
-                RaycastHit hit;
-                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-                float angle = Vector3.Angle(ray.direction, Vector3.down) * Mathf.Deg2Rad;
-                float distance = Camera.main.transform.position.y / Mathf.Cos(angle);
-                Click = ray.origin + (ray.direction * distance);
-                click.y = 0;
-            }*/
 
             Vector3 massCenter = new Vector3();
             int closeBoids = 0;
@@ -67,14 +51,15 @@ namespace Assets.Scripts.IAJ.Unity.Movement.DynamicMovement
                 }
             }
             if(closeBoids == 0) return new MovementOutput();
-            //Debug.Log("Received click: " + PriorityManager.click);
+            /*
             if (PriorityManager.click.x != -1 && (Character.position - PriorityManager.click).magnitude >= CLICK_DISTANCE)
             {
                 //Debug.Log("Has clicked");
-                massCenter += PriorityManager.click;
-                massCenter /= (closeBoids + 1);
-            }else
-                massCenter /= closeBoids;
+                massCenter += PriorityManager.click * 10;
+                massCenter /= (closeBoids);
+            }else*/
+            massCenter /= closeBoids;
+            Debug.DrawRay(Character.position, massCenter - Character.position, Color.cyan);
             Target.position = massCenter;
             return base.GetMovement();
         }
