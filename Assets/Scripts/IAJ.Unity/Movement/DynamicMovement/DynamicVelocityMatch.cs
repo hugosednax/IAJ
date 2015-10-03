@@ -1,4 +1,12 @@
-﻿namespace Assets.Scripts.IAJ.Unity.Movement.DynamicMovement
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using UnityEngine;
+using Assets.Scripts.IAJ.Unity.Util;
+using Assets.Scripts.IAJ.Unity.Movement;
+
+namespace Assets.Scripts.IAJ.Unity.Movement.DynamicMovement
 {
     public class DynamicVelocityMatch : DynamicMovement
     {
@@ -27,6 +35,7 @@
                 output.linear = output.linear.normalized*this.MaxAcceleration;
             }
             output.angular = 0;
+            //Debug.DrawRay(Character.position, output.linear, new Color(70 / 255, 15 / 255, 11 / 255));
             return output;
         }
     }

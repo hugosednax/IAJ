@@ -16,16 +16,24 @@ public class PriorityManager : MonoBehaviour
     public const float MAX_LOOK_AHEAD = 5.0f;
     public const float MAX_SPEED = 40.0f;
     public const float MAX_ACCELERATION = 40.0f;
-
     public const float DRAG = 0.1f;
+
     public const float CLICK_ARRIVE_WEIGHT= 60.0f;
+
     public const float COHESION_WEIGHT = 30.0f;
-    public const float SEPARATION_WEIGHT = 30.0f;
-    public const float MATCH_SPEED_WEIGHT = 30.0f;
+    public const float FAN_ANGLE = 1.65f; //wannabe radian
     public const float COHESION_RADIUS = 60f;
-    public const float SEPARATION_FACTOR = 80.0f;
+
+    public const float SEPARATION_WEIGHT = 90.0f;
+    public const float SEPARATION_FACTOR = 150.0f;
+    public const float SEPARATION_RADIUS = 80f;
+
+    public const float OBSTACLE_AVOIDANCE_WEIGHT = 70.0f;
+
+    public const float MATCH_SPEED_WEIGHT = 30.0f;
+
     public const float MAX_NUMBER_OF_CLONES = 51.0f;
-    public const float FAN_ANGLE = 30f;
+
 
     public static Vector3 click = new Vector3(-1, -1, -1);
 
@@ -191,7 +199,7 @@ public class PriorityManager : MonoBehaviour
                 Character = character.KinematicData,
                 MovementDebugColor = Color.magenta
             };
-            blended.Movements.Add(new MovementWithWeight(avoidObstacleMovement, 5f));
+            blended.Movements.Add(new MovementWithWeight(avoidObstacleMovement, OBSTACLE_AVOIDANCE_WEIGHT));
             priority.Movements.Add(avoidObstacleMovement);
 	    }
 
@@ -234,7 +242,7 @@ public class PriorityManager : MonoBehaviour
                     MovementDebugColor = Color.blue,
                     Target = new KinematicData(),
                     Flock = otherCharacters,
-                    Radius = COHESION_RADIUS,
+                    Radius = SEPARATION_RADIUS,
                     SeparationFactor = SEPARATION_FACTOR
                 };
                 blended.Movements.Add(new MovementWithWeight(separationCharacter, SEPARATION_WEIGHT));
