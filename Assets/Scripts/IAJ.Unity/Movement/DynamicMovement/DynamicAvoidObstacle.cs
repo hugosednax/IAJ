@@ -36,9 +36,12 @@ namespace Assets.Scripts.IAJ.Unity.Movement.DynamicMovement
             RaycastHit hitL;
             RaycastHit realHit;
 
-            Debug.DrawRay(Character.position, forward * MaxLookAhead, Color.red);
-            Debug.DrawRay(Character.position, Quaternion.AngleAxis(45, Vector3.up) * forward * MaxLookAhead / 2, Color.green);
-            Debug.DrawRay(Character.position, Quaternion.AngleAxis(-45, Vector3.up) * forward * MaxLookAhead / 2, Color.green);
+            if (PriorityManager.debugMode)
+            {
+                Debug.DrawRay(Character.position, forward * MaxLookAhead, Color.red);
+                Debug.DrawRay(Character.position, Quaternion.AngleAxis(45, Vector3.up) * forward * MaxLookAhead / 2, Color.green);
+                Debug.DrawRay(Character.position, Quaternion.AngleAxis(-45, Vector3.up) * forward * MaxLookAhead / 2, Color.green);
+            }
 
             Ray rwhisker = new Ray(Character.position, (Quaternion.AngleAxis(-45, Vector3.up) * forward).normalized);
             Ray lwhisker = new Ray(Character.position, (Quaternion.AngleAxis(45, Vector3.up) * forward).normalized);
@@ -60,7 +63,8 @@ namespace Assets.Scripts.IAJ.Unity.Movement.DynamicMovement
 
                     //Debug.Log(realHit.transform.name);
                     Target.position = realHit.point + realHit.normal.normalized * AvoidMargin;
-                    Debug.DrawRay(realHit.point, Target.position - realHit.point, Color.blue);
+                    if(PriorityManager.debugMode)
+                        Debug.DrawRay(realHit.point, Target.position - realHit.point, Color.blue);
                 }
                 else return new MovementOutput();
             }

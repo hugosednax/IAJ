@@ -38,7 +38,8 @@ namespace Assets.Scripts.IAJ.Unity.Movement.DynamicMovement
             if (PriorityManager.click.x != -1 && (Character.position - PriorityManager.click).magnitude >= CLICK_DISTANCE)
             {
                 Target.position = PriorityManager.click;
-                Debug.DrawRay(Character.position, Target.position - Character.position, Color.magenta);
+                if(PriorityManager.debugMode)
+                    Debug.DrawRay(Character.position, Target.position - Character.position, Color.magenta);
             } else
             if ((Character.position - PriorityManager.click).magnitude <= CLICK_DISTANCE)
             {

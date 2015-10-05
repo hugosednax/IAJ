@@ -36,19 +36,22 @@ namespace Assets.Scripts.IAJ.Unity.Movement.DynamicMovement
 
             foreach (KinematicData boid in flock)
             {
-                if(boid != Character)
+                if(boid != Character){
                     direction = Character.position - boid.position;
-                if(direction.magnitude < radius){
-                    separationStrength = Mathf.Min(separationFactor / (direction.magnitude * direction.magnitude), MaxAcceleration);
-                    direction.Normalize();
-                    output.linear += direction * separationStrength;
+                    if (direction.magnitude < radius)
+                    {
+                        separationStrength = Mathf.Min(separationFactor / (direction.magnitude * direction.magnitude), MaxAcceleration);
+                        direction.Normalize();
+                        output.linear += direction * separationStrength;
+                    }
                 }
             }
             if(output.linear.magnitude > MaxAcceleration){
                 output.linear.Normalize();
                 output.linear*=MaxAcceleration;
             }
-            Debug.DrawRay(Character.position, output.linear, Color.gray);
+            if (PriorityManager.debugMode)
+                Debug.DrawRay(Character.position, output.linear, Color.gray);
             return output;
         }
 

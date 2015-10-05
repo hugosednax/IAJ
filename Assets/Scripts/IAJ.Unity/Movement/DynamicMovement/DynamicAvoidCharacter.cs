@@ -58,7 +58,8 @@ namespace Assets.Scripts.IAJ.Unity.Movement.DynamicMovement{
             avoidanceDirection = (closestDeltaPos + closestDeltaVel * shortestTime)*-1;
             MovementOutput output = new MovementOutput();
             output.linear = avoidanceDirection.normalized*MaxAcceleration;
-            Debug.DrawRay(Character.position, avoidanceDirection.normalized * MaxAcceleration, Color.black);
+            if (PriorityManager.debugMode)
+                Debug.DrawRay(Character.position, avoidanceDirection.normalized * MaxAcceleration, Color.black);
             return output;
         }
     }
