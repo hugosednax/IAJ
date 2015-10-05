@@ -31,10 +31,7 @@ namespace Assets.Scripts.IAJ.Unity.Movement.DynamicMovement
         public override MovementOutput GetMovement()
         {
             Vector3 forward = Character.velocity.normalized;
-            RaycastHit hit;
-            RaycastHit hitR;
-            RaycastHit hitL;
-            RaycastHit realHit;
+            
 
             if (PriorityManager.debugMode)
             {
@@ -43,33 +40,34 @@ namespace Assets.Scripts.IAJ.Unity.Movement.DynamicMovement
                 Debug.DrawRay(Character.position, Quaternion.AngleAxis(-45, Vector3.up) * forward * MaxLookAhead / 2, Color.green);
             }
 
-            Ray rwhisker = new Ray(Character.position, (Quaternion.AngleAxis(-45, Vector3.up) * forward).normalized);
-            Ray lwhisker = new Ray(Character.position, (Quaternion.AngleAxis(45, Vector3.up) * forward).normalized);
-            Ray central = new Ray(Character.position, forward);
-
-            if (!forward.Equals(new Vector3(0,0,0)))
+            if (!forward.Equals(new Vector3(0, 0, 0)))
             {
-                bool RwhiskerCollided = obstacle.GetComponent<Collider>().Raycast(rwhisker, out hitR, MaxLookAhead / 2);
-                bool LwhiskerCollided = obstacle.GetComponent<Collider>().Raycast(lwhisker, out hitL, MaxLookAhead / 2);
-
-                if (obstacle.GetComponent<Collider>().Raycast(central, out hit, MaxLookAhead) || RwhiskerCollided || LwhiskerCollided)
+                /*bool RwhiskerCollided = ;
+                bool LwhiskerCollided =;*/
+                RaycastHit hit;
+                Ray ray = new Ray(Character.position, forward);
+                float whiskersRange = MaxLookAhead / 2;
+                Collider coll = obstacle.GetComponent<Collider>();
+                if (coll.Raycast(new Ray(Character.position, forward), out hit, MaxLookAhead))
                 {
-                    if (hit.collider != null)
-                        realHit = hit;
-                    else if (hitR.collider != null)
-                        realHit = hitR;
-                    else
-                        realHit = hitL;
 
-                    //Debug.Log(realHit.transform.name);
-                    Target.position = realHit.point + realHit.normal.normalized * AvoidMargin;
-                    if(PriorityManager.debugMode)
-                        Debug.DrawRay(realHit.point, Target.position - realHit.point, Color.blue);
                 }
-                else return new MovementOutput();
+                else{
+                    ray.direction = (Quaternion.AngleAxis(-45, Vector3.up) * forward).normalized;
+                    if (coll.Raycast(ray, out hit, whiskersRange))
+                    {
+                    }else{
+                        ray.direction = (Quaternion.AngleAxis(45, Vector3.up) * forward).normalized;
+                        if (coll.Raycast(ray, out hit, whiskersRange))
+                        {
+                        }else return new MovementOutput();
+                    }
+                }
+                Target.position = hit.point + hit.normal.normalized * AvoidMargin;
+                if (PriorityManager.debugMode)
+                    Debug.DrawRay(hit.point, Target.position - hit.point, Color.blue);
             }
             return base.GetMovement();
         }
-
     }
 }

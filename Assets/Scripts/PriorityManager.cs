@@ -22,19 +22,19 @@ public class PriorityManager : MonoBehaviour
 
     public const float COHESION_WEIGHT = 30.0f;
     public const float FAN_ANGLE = 1.65f; //wannabe radian
-    public const float COHESION_RADIUS = 60f;
+    public const float COHESION_RADIUS = 15f;
 
     public const float SEPARATION_WEIGHT = 90.0f;
     public const float SEPARATION_FACTOR = 150.0f;
-    public const float SEPARATION_RADIUS = 80f;
+    public const float SEPARATION_RADIUS = 15f;
 
     public const float OBSTACLE_AVOIDANCE_WEIGHT = 70.0f;
 
     public const float MATCH_SPEED_WEIGHT = 30.0f;
 
-    public const float MAX_NUMBER_OF_CLONES = 51.0f;
+    public const int MAX_NUMBER_OF_CLONES = 50;
 
-    public static bool debugMode = true;
+    public static bool debugMode = false;
     public static Vector3 click = new Vector3(-1, -1, -1);
 
 	private DynamicCharacter RedCharacter { get; set; }
@@ -48,6 +48,10 @@ public class PriorityManager : MonoBehaviour
     private PriorityMovement Priority { get; set; }
 
     private List<DynamicCharacter> Characters { get; set; }
+
+    private List<KinematicData> CharactersKinData;
+
+    private GameObject[] obstacles;
 
 	// Use this for initialization
 	void Start () 
@@ -72,23 +76,28 @@ public class PriorityManager : MonoBehaviour
 	    };
 
 
-	    var obstacles = GameObject.FindGameObjectsWithTag("Obstacle");
+	    obstacles = GameObject.FindGameObjectsWithTag("Obstacle");
 
-        int numberOfClones = (int)(Random.value * MAX_NUMBER_OF_CLONES);
+        int numberOfClones = Random.Range(1, MAX_NUMBER_OF_CLONES);
         this.Characters = this.CloneSecondaryCharacters(redObj, numberOfClones, obstacles);
 
 	    this.Characters.Add(this.RedCharacter);
 
+        CharactersKinData = new List<KinematicData>();
+        foreach (DynamicCharacter ch in Characters)
+        {
+            CharactersKinData.Add(ch.KinematicData);
+        }
         //this.InitializeMainCharacter(obstacles);
 
         //initialize all but the last character (because it was already initialized as the main character)
 	    foreach (var character in this.Characters)
 	    {
-	        this.InitializeSecondaryCharacter(character, obstacles, false);
+	        this.InitializeSecondaryCharacter(character, false);
 	    }
 	}
 
-    private void InitializeSecondaryCharacter(DynamicCharacter character, GameObject[] obstacles, bool isPriority)
+    private void InitializeSecondaryCharacter(DynamicCharacter character, bool isPriority)
     {
         var priority = new PriorityMovement
         {
@@ -100,19 +109,8 @@ public class PriorityManager : MonoBehaviour
             Character = character.KinematicData,
         };
 
-        List<KinematicData> otherCharacters = new List<KinematicData>();
-
-        foreach (DynamicCharacter otherChar in this.Characters)
-        {
-            if (otherChar != character)
-                otherCharacters.Add(otherChar.KinematicData);
-        }
-        //otherCharacters.Remove(RedCharacter.KinematicData); // REMOVE THIS LINE AFTER
-
         foreach (var obstacle in obstacles)
         {
-
-            //TODO: add your AvoidObstacle movement here
             DynamicAvoidObstacle avoidObstacleMovement = new DynamicAvoidObstacle(obstacle)
             {
                 MaxAcceleration = MAX_ACCELERATION,
@@ -151,7 +149,7 @@ public class PriorityManager : MonoBehaviour
             Target = new KinematicData(),
             FanAngle = FAN_ANGLE,
             Radius = COHESION_RADIUS,
-            Flock = otherCharacters
+            Flock = CharactersKinData
         };
         blended.Movements.Add(new MovementWithWeight(cohesionCharacter, COHESION_WEIGHT));
         priority.Movements.Add(cohesionCharacter);
@@ -162,7 +160,7 @@ public class PriorityManager : MonoBehaviour
             MaxAcceleration = MAX_ACCELERATION,
             MovementDebugColor = Color.blue,
             Target = new KinematicData(),
-            Flock = otherCharacters,
+            Flock = CharactersKinData,
             Radius = SEPARATION_RADIUS,
             SeparationFactor = SEPARATION_FACTOR
         };
@@ -173,7 +171,7 @@ public class PriorityManager : MonoBehaviour
         {
             Character = character.KinematicData,
             FanAngle = FAN_ANGLE,
-            Flock = otherCharacters,
+            Flock = CharactersKinData,
             MaxAcceleration = MAX_ACCELERATION,
             MovementDebugColor = Color.black,
             MovingTarget = new KinematicData(),
@@ -245,20 +243,16 @@ public class PriorityManager : MonoBehaviour
 		} 
 		else if (Input.GetKeyDown (KeyCode.B))
 		{
-            var obstacles = GameObject.FindGameObjectsWithTag("Obstacle");
-
             foreach (var character in this.Characters)
             {
-                this.InitializeSecondaryCharacter(character, obstacles, false);
+                this.InitializeSecondaryCharacter(character, false);
             }
 		}
 		else if (Input.GetKeyDown (KeyCode.P))
 		{
-            var obstacles = GameObject.FindGameObjectsWithTag("Obstacle");
-
 		    foreach (var character in this.Characters)
 	        {
-	            this.InitializeSecondaryCharacter(character, obstacles, true);
+	            this.InitializeSecondaryCharacter(character, true);
 	        }
         }
         else if (Input.GetKeyDown(KeyCode.D))
@@ -293,16 +287,4 @@ public class PriorityManager : MonoBehaviour
             movingCharacter.GameObject.transform.position = movingCharacter.Movement.Character.position;
         }
     }
-
-    /*private void UpdateMovementText()
-    {
-        if (this.RedCharacter.Movement == null)
-        {
-            this.RedMovementText.text = "Red Movement: Stationary";
-        }
-        else
-        {
-            this.RedMovementText.text = "Red Movement: " + this.RedCharacter.Movement.Name;
-        }
-    }*/
 }
