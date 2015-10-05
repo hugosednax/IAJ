@@ -79,6 +79,7 @@ public class PriorityManager : MonoBehaviour
 	    obstacles = GameObject.FindGameObjectsWithTag("Obstacle");
 
         int numberOfClones = Random.Range(1, MAX_NUMBER_OF_CLONES);
+        //int numberOfClones = MAX_NUMBER_OF_CLONES;
         this.Characters = this.CloneSecondaryCharacters(redObj, numberOfClones, obstacles);
 
 	    this.Characters.Add(this.RedCharacter);
@@ -109,20 +110,18 @@ public class PriorityManager : MonoBehaviour
             Character = character.KinematicData,
         };
 
-        foreach (var obstacle in obstacles)
+        
+        var avoidObstacleMovement = new DynamicAvoidObstacle()
         {
-            DynamicAvoidObstacle avoidObstacleMovement = new DynamicAvoidObstacle(obstacle)
-            {
-                MaxAcceleration = MAX_ACCELERATION,
-                AvoidMargin = AVOID_MARGIN,
-                MaxLookAhead = MAX_LOOK_AHEAD,
-                Character = character.KinematicData,
-                MovementDebugColor = Color.magenta
-            };
-            blended.Movements.Add(new MovementWithWeight(avoidObstacleMovement, OBSTACLE_AVOIDANCE_WEIGHT));
-            priority.Movements.Add(avoidObstacleMovement);
-        }
-
+            MaxAcceleration = MAX_ACCELERATION,
+            AvoidMargin = AVOID_MARGIN,
+            MaxLookAhead = MAX_LOOK_AHEAD,
+            Character = character.KinematicData,
+            MovementDebugColor = Color.magenta,
+            Obstacles = obstacles
+        };
+        blended.Movements.Add(new MovementWithWeight(avoidObstacleMovement, OBSTACLE_AVOIDANCE_WEIGHT));
+        priority.Movements.Add(avoidObstacleMovement);
 
         var clickArrive = new DynamicClickArrive()
         {
